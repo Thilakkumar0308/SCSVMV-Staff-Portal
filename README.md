@@ -61,7 +61,7 @@ This system provides:
 
 1. Clone the repo:  
    ```bash
-   git clone https://github.com/your-username/Student-Management-System.git
+   git clone https://github.com/Thilakkumar0308/scsvmv-student-management.git
    cd Student-Management-System
 
 2.Set up database: 
