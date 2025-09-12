@@ -1,0 +1,112 @@
+/* -------------------- Global Styles -------------------- */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg,#0f0f1a,#1a1a2e);
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* -------------------- Top Bar -------------------- */
+.top-bar {
+    background-color: #0056b3; 
+    color: white; 
+    font-size: 14px;
+}
+.top-bar a { color: white; text-decoration: none; }
+
+/* -------------------- Navbar -------------------- */
+.navbar {
+    background-color: #1a1a2e !important;
+    color: #fff;
+}
+
+/* -------------------- Sidebar -------------------- */
+.sidebar {
+    height: 100vh;
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: -250px;
+    background-color: #343a40;
+    color: white;
+    transition: 0.3s;
+    z-index: 1050;
+    padding-top: 70px;
+}
+.sidebar a { display: block; color: white; padding: 12px 20px; text-decoration: none; }
+.sidebar a:hover { background-color: #495057; }
+.sidebar .close-btn { position: absolute; top: 10px; right: 20px; font-size: 30px; cursor: pointer; }
+
+/* -------------------- Main Content -------------------- */
+#main-content {
+    transition: margin-left 0.3s;
+    padding: 20px;
+    margin-left: 0;
+    flex: 1 0 auto;
+}
+
+/* -------------------- Buttons -------------------- */
+.btn-primary {
+    background: linear-gradient(135deg,#764baa,#9a5edd);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+}
+.btn-primary:hover {
+    background: linear-gradient(135deg,#9a5edd,#764baa);
+    box-shadow: 0 0 15px rgba(118,75,162,0.7);
+}
+
+/* -------------------- Cards -------------------- */
+.card {
+    border-radius: 15px;
+    border: none;
+    background-color: rgba(0,0,0,0.6);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+}
+.card-header { font-weight:bold; font-size:16px; border-bottom:1px solid rgba(255,255,255,0.1); }
+
+/* -------------------- Dashboard Gradients -------------------- */
+.gradient-blue { background: linear-gradient(135deg,#1e3c72,#2a5298); }
+.gradient-green { background: linear-gradient(135deg,#1e6f5c,#28a745); }
+.gradient-yellow { background: linear-gradient(135deg,#f0ad4e,#ffc107); }
+.gradient-purple { background: linear-gradient(135deg,#764ba2,#9a5edd); }
+.card-icon { position: absolute; right:20px; bottom:20px; font-size:2rem; opacity:0.2; }
+
+/* -------------------- Footer -------------------- */
+footer {
+    background-color: #111;
+    color: #aaa;
+    margin-top: auto;
+    padding: 10px 0;
+    text-align: center;
+}
+
+/* -------------------- DataTables Custom -------------------- */
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter,
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_processing,
+.dataTables_wrapper .dataTables_paginate { color: #fff; }
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: #764baa !important;
+    color: #fff !important;
+    border-radius: 0.35rem;
+}
+
+/* -------------------- Rain Canvas -------------------- */
+#rain-canvas {
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:-1;
+    pointer-events:none;
+}
