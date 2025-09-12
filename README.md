@@ -62,7 +62,7 @@ This system provides:
 1. Clone the repo:  
    ```bash
    git clone https://github.com/Thilakkumar0308/scsvmv-student-management.git
-   cd Student-Management-System
+   cd scsvmv-student-management
 
 2.Set up database: 
  * Import sms.sql into MySQL
@@ -72,5 +72,5 @@ This system provides:
  * Laravel: php artisan serve
  * Node.js: npm install && npm start
 
-4.Open in browser:http://localhost:8000
+4.Open in browser: http://localhost/student-management/
 
