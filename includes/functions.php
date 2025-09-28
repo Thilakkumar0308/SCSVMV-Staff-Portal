@@ -1,72 +1,89 @@
 <?php
 // Utility functions for the Student Management System
 
-function has_role($role) {
-    return isset($_SESSION['user_role']) && $_SESSION['user_role'] === $role;
+if (!function_exists('has_role')) {
+    function has_role($role) {
+        // Use unified session key set at login
+        return isset($_SESSION['role']) && $_SESSION['role'] === $role;
+    }
 }
 
-function has_any_role($roles) {
-    if (!isset($_SESSION['user_role'])) {
+if (!function_exists('has_any_role')) {
+    function has_any_role($roles) {
+        if (!isset($_SESSION['role'])) {
+            return false;
+        }
+        
+        if (is_string($roles)) {
+            return $_SESSION['role'] === $roles;
+        }
+        
+        if (is_array($roles)) {
+            return in_array($_SESSION['role'], $roles);
+        }
+        
         return false;
     }
-    
-    if (is_string($roles)) {
-        return $_SESSION['user_role'] === $roles;
-    }
-    
-    if (is_array($roles)) {
-        return in_array($_SESSION['user_role'], $roles);
-    }
-    
-    return false;
 }
 
-function require_role($role) {
-    if (!has_role($role)) {
-        redirect('dashboard.php');
+if (!function_exists('require_role')) {
+    function require_role($role) {
+        if (!has_role($role)) {
+            redirect('dashboard.php');
+        }
     }
 }
 
-function require_any_role($roles) {
-    if (!has_any_role($roles)) {
-        redirect('dashboard.php');
+if (!function_exists('require_any_role')) {
+    function require_any_role($roles) {
+        if (!has_any_role($roles)) {
+            redirect('dashboard.php');
+        }
     }
 }
 
-function redirect($url) {
-    header("Location: $url");
-    exit();
-}
-
-function get_setting($key, $default = '') {
-    global $conn;
-    
-    $stmt = $conn->prepare("SELECT setting_value FROM settings WHERE setting_key = ?");
-    $stmt->bind_param("s", $key);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    if ($row = $result->fetch_assoc()) {
-        return $row['setting_value'];
+if (!function_exists('redirect')) {
+    function redirect($url) {
+        header("Location: $url");
+        exit();
     }
-    
-    return $default;
 }
 
-function set_setting($key, $value, $description = '') {
-    global $conn;
-    
-    $stmt = $conn->prepare("INSERT INTO settings (setting_key, setting_value, description) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE setting_value = ?, description = ?");
-    $stmt->bind_param("sssss", $key, $value, $description, $value, $description);
-    
-    return $stmt->execute();
+if (!function_exists('get_setting')) {
+    function get_setting($key, $default = '') {
+        global $conn;
+        
+        $stmt = $conn->prepare("SELECT setting_value FROM settings WHERE setting_key = ?");
+        $stmt->bind_param("s", $key);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($row = $result->fetch_assoc()) {
+            return $row['setting_value'];
+        }
+        
+        return $default;
+    }
 }
 
-function sanitize_input($data) {
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data);
-    return $data;
+if (!function_exists('set_setting')) {
+    function set_setting($key, $value, $description = '') {
+        global $conn;
+        
+        $stmt = $conn->prepare("INSERT INTO settings (setting_key, setting_value, description) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE setting_value = ?, description = ?");
+        $stmt->bind_param("sssss", $key, $value, $description, $value, $description);
+        
+        return $stmt->execute();
+    }
+}
+
+if (!function_exists('sanitize_input')) {
+    function sanitize_input($data) {
+        $data = trim($data);
+        $data = stripslashes($data);
+        $data = htmlspecialchars($data);
+        return $data;
+    }
 }
 
 function format_date($date, $format = 'M d, Y') {
