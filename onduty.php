@@ -11,6 +11,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $action = $_POST['action'];
         
         if ($action == 'add') {
+            // Teachers and Admin/HOD can submit requests, others blocked
+            if (!(has_any_role(['Teacher','HOD','Admin']))) { redirect('dashboard.php'); }
             $student_id = $_POST['student_id'];
             $event_name = sanitize_input($_POST['event_name']);
             $event_date = $_POST['event_date'];
@@ -32,6 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         
         elseif ($action == 'approve') {
+            // Only HOD or Admin can approve
+            if (!has_any_role(['HOD','Admin'])) { redirect('dashboard.php'); }
             $id = $_POST['id'];
             $stmt = $conn->prepare("UPDATE onduty_requests SET status = 'Approved', approved_by = ?, approved_at = NOW() WHERE id = ?");
             $stmt->bind_param("ii", $_SESSION['user_id'], $id);
@@ -46,6 +50,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         
         elseif ($action == 'reject') {
+            // Only HOD or Admin can reject
+            if (!has_any_role(['HOD','Admin'])) { redirect('dashboard.php'); }
             $id = $_POST['id'];
             $stmt = $conn->prepare("UPDATE onduty_requests SET status = 'Rejected', approved_by = ?, approved_at = NOW() WHERE id = ?");
             $stmt->bind_param("ii", $_SESSION['user_id'], $id);
@@ -60,6 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         
         elseif ($action == 'delete') {
+            // Only Admin can hard delete
+            if (!has_role('Admin')) { redirect('dashboard.php'); }
             $id = $_POST['id'];
             $stmt = $conn->prepare("DELETE FROM onduty_requests WHERE id = ?");
             $stmt->bind_param("i", $id);
@@ -247,7 +255,7 @@ $date_filter = isset($_GET['date']) ? $_GET['date'] : '';
                 <h5 class="modal-title">New On-Duty Request</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST">
+            <form method="POST" class="add-form add-onduty-form">
                 <div class="modal-body">
                     <input type="hidden" name="action" value="add">
                     <div class="row">
@@ -274,7 +282,7 @@ $date_filter = isset($_GET['date']) ? $_GET['date'] : '';
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="venue" class="form-label">Venue *</label>
-                            <input type="text" class="form-control" id="venue" name="venue" required placeholder="e.g., School Auditorium, Sports Complex">
+                            <input type="text" class="form-control" id="venue" name="venue" required placeholder="e.g., University Auditorium, Sports Complex">
                         </div>
                     </div>
                     <div class="row">

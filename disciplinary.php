@@ -2,6 +2,9 @@
 $page_title = 'Disciplinary Management';
 require_once 'includes/header.php';
 
+$allowed = has_any_role(['HOD','Admin']);
+if (!$allowed) { redirect('dashboard.php'); }
+
 $message = '';
 $message_type = '';
 
@@ -11,6 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $action = $_POST['action'];
         
         if ($action == 'add') {
+            if (!has_any_role(['HOD','Admin'])) { redirect('dashboard.php'); }
             $student_id = $_POST['student_id'];
             $action_type = $_POST['action_type'];
             $description = sanitize_input($_POST['description']);
@@ -30,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         
         elseif ($action == 'edit') {
+            if (!has_any_role(['HOD','Admin'])) { redirect('dashboard.php'); }
             $id = $_POST['id'];
             $action_type = $_POST['action_type'];
             $description = sanitize_input($_POST['description']);
@@ -49,6 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         
         elseif ($action == 'delete') {
+            if (!has_any_role(['HOD','Admin'])) { redirect('dashboard.php'); }
             $id = $_POST['id'];
             $stmt = $conn->prepare("DELETE FROM disciplinary_actions WHERE id = ?");
             $stmt->bind_param("i", $id);
@@ -227,7 +233,7 @@ $type_filter = isset($_GET['type']) ? $_GET['type'] : '';
                 <h5 class="modal-title">Record Disciplinary Action</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST">
+            <form method="POST" class="add-form add-record-form">
                 <div class="modal-body">
                     <input type="hidden" name="action" value="add">
                     <div class="row">
@@ -384,11 +390,11 @@ function deleteDisciplinary(id) {
     new bootstrap.Modal(document.getElementById('deleteModal')).show();
 }
 
-// Date validation
+// Date validation - Allow today's date but not future dates
 document.getElementById('action_date').addEventListener('change', function() {
     var actionDate = new Date(this.value);
     var today = new Date();
-    today.setHours(0, 0, 0, 0);
+    today.setHours(23, 59, 59, 999); // Set to end of today to allow today's date
     
     if (actionDate > today) {
         alert('Action date cannot be in the future');
@@ -399,7 +405,7 @@ document.getElementById('action_date').addEventListener('change', function() {
 document.getElementById('edit_action_date').addEventListener('change', function() {
     var actionDate = new Date(this.value);
     var today = new Date();
-    today.setHours(0, 0, 0, 0);
+    today.setHours(23, 59, 59, 999); // Set to end of today to allow today's date
     
     if (actionDate > today) {
         alert('Action date cannot be in the future');

@@ -2,142 +2,230 @@
 $page_title = 'Student Management';
 require_once 'includes/header.php';
 
+// Check permissions
+if (!has_role('Admin') && !has_role('DeptAdmin') && !has_role('HOD')) {
+    redirect('dashboard.php');
+}
+
 $message = '';
 $message_type = '';
 
-// Handle form submissions
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['action'])) {
-        $action = $_POST['action'];
-        
-        if ($action == 'add') {
-            $student_id = sanitize_input($_POST['student_id']);
-            $first_name = sanitize_input($_POST['first_name']);
-            $last_name = sanitize_input($_POST['last_name']);
-            $email = sanitize_input($_POST['email']);
-            $phone = sanitize_input($_POST['phone']);
-            $date_of_birth = $_POST['date_of_birth'];
-            $gender = $_POST['gender'];
-            $address = sanitize_input($_POST['address']);
-            $class_id = $_POST['class_id'];
-            $parent_name = sanitize_input($_POST['parent_name']);
-            $parent_phone = sanitize_input($_POST['parent_phone']);
-            $admission_date = $_POST['admission_date'];
-            
-            // Check if student ID already exists
-            $stmt = $conn->prepare("SELECT id FROM students WHERE student_id = ?");
-            $stmt->bind_param("s", $student_id);
-            $stmt->execute();
-            if ($stmt->get_result()->num_rows > 0) {
-                $message = 'Student ID already exists';
-                $message_type = 'danger';
-            } else {
-                $stmt = $conn->prepare("INSERT INTO students (student_id, first_name, last_name, email, phone, date_of_birth, gender, address, class_id, parent_name, parent_phone, admission_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->bind_param("ssssssssisss", $student_id, $first_name, $last_name, $email, $phone, $date_of_birth, $gender, $address, $class_id, $parent_name, $parent_phone, $admission_date);
-                
-                if ($stmt->execute()) {
-                    $message = 'Student added successfully';
-                    $message_type = 'success';
-                } else {
-                    $message = 'Error adding student: ' . $conn->error;
-                    $message_type = 'danger';
-                }
+// Upload folder
+$upload_dir = __DIR__ . '/uploads/profile_pictures/';
+if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
+
+// Handle Add/Edit/Delete
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
+
+    // ---------------- ADD STUDENT ----------------
+    if ($_POST['action'] === 'add') {
+        $student_id = sanitize_input($_POST['student_id']);
+        $first_name = sanitize_input($_POST['first_name']);
+        $last_name = sanitize_input($_POST['last_name']);
+        $email = sanitize_input($_POST['email']);
+        $phone = sanitize_input($_POST['phone']);
+        $date_of_birth = !empty($_POST['date_of_birth']) ? $_POST['date_of_birth'] : null;
+        $gender = $_POST['gender'] ?? null;
+        $address = sanitize_input($_POST['address'] ?? '');
+        $class_id = (int)($_POST['class_id'] ?? 0);
+        $parent_name = sanitize_input($_POST['parent_name'] ?? '');
+        $parent_phone = sanitize_input($_POST['parent_phone'] ?? '');
+        $admission_date = !empty($_POST['admission_date']) ? $_POST['admission_date'] : null;
+        $status = 'Active';
+
+        // Profile picture
+        $profile_picture = null;
+        if (!empty($_FILES['profile_picture']['name']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
+            $filename = time() . "_" . preg_replace('/[^A-Za-z0-9._-]/', '_', basename($_FILES['profile_picture']['name']));
+            $target_file = $upload_dir . $filename;
+            $web_path = 'uploads/profile_pictures/' . $filename;
+
+            if (move_uploaded_file($_FILES['profile_picture']['tmp_name'], $target_file)) {
+                $profile_picture = $web_path;
             }
         }
-        
-        elseif ($action == 'edit') {
-            $id = $_POST['id'];
-            $student_id = sanitize_input($_POST['student_id']);
-            $first_name = sanitize_input($_POST['first_name']);
-            $last_name = sanitize_input($_POST['last_name']);
-            $email = sanitize_input($_POST['email']);
-            $phone = sanitize_input($_POST['phone']);
-            $date_of_birth = $_POST['date_of_birth'];
-            $gender = $_POST['gender'];
-            $address = sanitize_input($_POST['address']);
-            $class_id = $_POST['class_id'];
-            $parent_name = sanitize_input($_POST['parent_name']);
-            $parent_phone = sanitize_input($_POST['parent_phone']);
-            $admission_date = $_POST['admission_date'];
-            $status = $_POST['status'];
-            
-            $stmt = $conn->prepare("UPDATE students SET student_id=?, first_name=?, last_name=?, email=?, phone=?, date_of_birth=?, gender=?, address=?, class_id=?, parent_name=?, parent_phone=?, admission_date=?, status=? WHERE id=?");
-            $stmt->bind_param("ssssssssissssi", $student_id, $first_name, $last_name, $email, $phone, $date_of_birth, $gender, $address, $class_id, $parent_name, $parent_phone, $admission_date, $status, $id);
-            
-            if ($stmt->execute()) {
-                $message = 'Student updated successfully';
-                $message_type = 'success';
-            } else {
-                $message = 'Error updating student: ' . $conn->error;
-                $message_type = 'danger';
+
+        $stmt = $conn->prepare("INSERT INTO students 
+            (student_id, first_name, last_name, email, phone, date_of_birth, gender, address, class_id, parent_name, parent_phone, admission_date, status, profile_picture) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+        if (!$stmt) die("Prepare failed: " . $conn->error);
+
+        $stmt->bind_param(
+            "ssssssssisssss", 
+            $student_id, $first_name, $last_name, $email, $phone, 
+            $date_of_birth, $gender, $address, $class_id, 
+            $parent_name, $parent_phone, $admission_date, $status, $profile_picture
+        );
+
+        if ($stmt->execute()) {
+            $message = "Student added successfully";
+            $message_type = "success";
+        } else {
+            $message = "DB Error: " . $stmt->error;
+            $message_type = "danger";
+        }
+    }
+
+    // ---------------- EDIT STUDENT ----------------
+    elseif ($_POST['action'] === 'edit') {
+        $id = (int)($_POST['id'] ?? 0);
+        $student_id = sanitize_input($_POST['student_id'] ?? '');
+        $first_name = sanitize_input($_POST['first_name'] ?? '');
+        $last_name = sanitize_input($_POST['last_name'] ?? '');
+        $email = sanitize_input($_POST['email'] ?? '');
+        $phone = sanitize_input($_POST['phone'] ?? '');
+        $date_of_birth = !empty($_POST['date_of_birth']) ? $_POST['date_of_birth'] : null;
+        $gender = $_POST['gender'] ?? null;
+        $address = sanitize_input($_POST['address'] ?? '');
+        $class_id = (int)($_POST['class_id'] ?? 0);
+        $parent_name = sanitize_input($_POST['parent_name'] ?? '');
+        $parent_phone = sanitize_input($_POST['parent_phone'] ?? '');
+        $admission_date = !empty($_POST['admission_date']) ? $_POST['admission_date'] : null;
+        $status = $_POST['status'] ?? 'Active';
+
+        // Get current profile picture
+        $res = $conn->prepare("SELECT profile_picture FROM students WHERE id=?");
+        $res->bind_param("i", $id);
+        $res->execute();
+        $r = $res->get_result()->fetch_assoc();
+        $current_picture = $r['profile_picture'] ?? null;
+
+        // Handle new picture
+        $profile_picture = $current_picture;
+        if (!empty($_FILES['profile_picture']['name']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
+            $filename = time() . "_" . preg_replace('/[^A-Za-z0-9._-]/', '_', basename($_FILES['profile_picture']['name']));
+            $target_file = $upload_dir . $filename;
+            $web_path = 'uploads/profile_pictures/' . $filename;
+
+            if (move_uploaded_file($_FILES['profile_picture']['tmp_name'], $target_file)) {
+                if ($current_picture && file_exists(__DIR__ . '/' . $current_picture)) unlink(__DIR__ . '/' . $current_picture);
+                $profile_picture = $web_path;
             }
         }
-        
-        elseif ($action == 'delete') {
-            $id = $_POST['id'];
-            $stmt = $conn->prepare("DELETE FROM students WHERE id = ?");
-            $stmt->bind_param("i", $id);
-            
-            if ($stmt->execute()) {
-                $message = 'Student deleted successfully';
-                $message_type = 'success';
-            } else {
-                $message = 'Error deleting student: ' . $conn->error;
-                $message_type = 'danger';
-            }
+
+        $stmt = $conn->prepare("UPDATE students SET 
+            student_id=?, first_name=?, last_name=?, email=?, phone=?, date_of_birth=?, gender=?, address=?, class_id=?, parent_name=?, parent_phone=?, admission_date=?, status=?, profile_picture=? 
+            WHERE id=?");
+
+        if (!$stmt) die("Prepare failed: " . $conn->error);
+
+        $stmt->bind_param(
+            "ssssssssisssssi",
+            $student_id, $first_name, $last_name, $email, $phone, $date_of_birth, $gender, $address, $class_id,
+            $parent_name, $parent_phone, $admission_date, $status, $profile_picture, $id
+        );
+
+        if ($stmt->execute()) {
+            $message = "Student updated successfully";
+            $message_type = "success";
+        } else {
+            $message = "DB Error: " . $stmt->error;
+            $message_type = "danger";
+        }
+    }
+
+    // ---------------- DELETE STUDENT ----------------
+    elseif ($_POST['action'] === 'delete') {
+        $id = (int)($_POST['id'] ?? 0);
+
+        $res = $conn->prepare("SELECT profile_picture FROM students WHERE id=?");
+        $res->bind_param("i", $id);
+        $res->execute();
+        $row = $res->get_result()->fetch_assoc();
+        $profile_picture = $row['profile_picture'] ?? null;
+
+        $stmt = $conn->prepare("DELETE FROM students WHERE id=?");
+        $stmt->bind_param("i", $id);
+
+        if ($stmt->execute()) {
+            if ($profile_picture && file_exists(__DIR__ . '/' . $profile_picture)) unlink(__DIR__ . '/' . $profile_picture);
+            $message = "Student deleted successfully";
+            $message_type = "success";
+        } else {
+            $message = "DB Error: " . $stmt->error;
+            $message_type = "danger";
         }
     }
 }
 
-// Get students with class information
+// Fetch students (ordered by student_id / roll number)
 $students = [];
 $result = $conn->query("
     SELECT s.*, c.class_name, c.section 
     FROM students s 
-    LEFT JOIN classes c ON s.class_id = c.id 
-    ORDER BY s.created_at DESC
+    LEFT JOIN classes c ON s.class_id=c.id 
+    ORDER BY CAST(s.student_id AS UNSIGNED) ASC
 ");
-while ($row = $result->fetch_assoc()) {
-    $students[] = $row;
-}
+while ($row = $result->fetch_assoc()) $students[] = $row;
 
-// Get classes for dropdown
+// Fetch classes
 $classes = [];
 $result = $conn->query("SELECT * FROM classes ORDER BY class_name, section");
-while ($row = $result->fetch_assoc()) {
-    $classes[] = $row;
-}
+while ($row = $result->fetch_assoc()) $classes[] = $row;
 ?>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2">Student Management</h1>
-                <div class="btn-toolbar mb-2 mb-md-0">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStudentModal">
-                        <i class="fas fa-plus me-1"></i>Add Student
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="container mt-4">
+    <h2>Student Management</h2>
 
     <?php if (!empty($message)): ?>
-    <div class="alert alert-<?php echo $message_type; ?> alert-dismissible fade show" role="alert">
-        <?php echo $message; ?>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
+        <div class="alert alert-<?php echo $message_type; ?> alert-dismissible fade show">
+            <?php echo $message; ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
     <?php endif; ?>
 
-    <!-- Students Table -->
-    <div class="card shadow">
-        <div class="card-body">
+<!-- Filters -->
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <div class="row g-3">
+      
+      <!-- Class Filter -->
+      <div class="col-12 col-md-3">
+        <label for="classFilter" class="form-label fw-semibold">Class</label>
+        <select id="classFilter" class="form-select form-select-sm">
+          <option value="">All Classes</option>
+          <?php foreach ($classes as $c): ?>
+            <option value="<?php echo $c['id']; ?>">
+              <?php echo htmlspecialchars($c['class_name'].' '.$c['section']); ?>
+            </option>
+          <?php endforeach; ?>
+        </select>
+      </div>
+
+      <!-- Name Filter -->
+      <div class="col-12 col-md-3">
+        <label for="nameFilter" class="form-label fw-semibold">Name</label>
+        <input type="text" id="nameFilter" class="form-control form-control-sm" placeholder="Search by name">
+      </div>
+
+      <!-- ID Filter -->
+      <div class="col-12 col-md-3">
+        <label for="idFilter" class="form-label fw-semibold">Register Number</label>
+        <input type="text" id="idFilter" class="form-control form-control-sm" placeholder="Register Number">
+      </div>
+
+      <!-- Add Student Button -->
+      <div class="col-12 col-md-3 d-flex align-items-end justify-content-md-end">
+        <button type="button" class="btn btn-primary w-100 w-md-auto" 
+                data-bs-toggle="modal" data-bs-target="#addModal">
+          <i class="fas fa-plus"></i> Add Student
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+    <!-- PC Table -->
+    <div class="d-none d-md-block card shadow">
+        <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-striped" id="studentsTable">
-                    <thead>
+                <table class="table table-striped table-hover mb-0" id="studentsTable">
+                    <thead class="table-dark">
                         <tr>
-                            <th>Student ID</th>
+                            <th>Photo</th>
+                            <th>Roll No</th>
                             <th>Name</th>
                             <th>Email</th>
                             <th>Phone</th>
@@ -147,25 +235,25 @@ while ($row = $result->fetch_assoc()) {
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($students as $student): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($student['student_id']); ?></td>
-                            <td><?php echo htmlspecialchars($student['first_name'] . ' ' . $student['last_name']); ?></td>
-                            <td><?php echo htmlspecialchars($student['email']); ?></td>
-                            <td><?php echo htmlspecialchars($student['phone']); ?></td>
-                            <td><?php echo htmlspecialchars($student['class_name'] . ' ' . $student['section']); ?></td>
+                        <?php foreach ($students as $s):
+                            $student_json_html = htmlspecialchars(json_encode($s, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP), ENT_QUOTES, 'UTF-8');
+                        ?>
+                        <tr class="student-row" data-student-id="<?php echo $s['student_id']; ?>" data-class-id="<?php echo $s['class_id']; ?>">
+                            <td><img src="<?php echo $s['profile_picture'] ?: 'uploads/profile_pictures/default.svg'; ?>" class="img-fluid rounded-circle" style="width:50px;height:50px;object-fit:cover;"></td>
+                            <td><?php echo htmlspecialchars($s['student_id']); ?></td>
+                            <td><?php echo htmlspecialchars($s['first_name'].' '.$s['last_name']); ?></td>
+                            <td><?php echo htmlspecialchars($s['email']); ?></td>
+                            <td><?php echo htmlspecialchars($s['phone']); ?></td>
+                            <td><?php echo htmlspecialchars($s['class_name'].' '.$s['section']); ?></td>
                             <td>
-                                <span class="badge bg-<?php echo $student['status'] == 'Active' ? 'success' : ($student['status'] == 'Inactive' ? 'warning' : 'info'); ?>">
-                                    <?php echo $student['status']; ?>
+                                <span class="badge bg-<?php echo ($s['status']=='Active') ? 'success' : (($s['status']=='Inactive') ? 'warning' : 'secondary'); ?>">
+                                    <?php echo htmlspecialchars($s['status'] ?? 'Active'); ?>
                                 </span>
                             </td>
-                            <td>
-                                <button class="btn btn-sm btn-outline-primary" onclick="editStudent(<?php echo htmlspecialchars(json_encode($student)); ?>)">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger" onclick="deleteStudent(<?php echo $student['id']; ?>)">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                            <td class="text-nowrap">
+                                <a href="student_info.php?student_id=<?php echo urlencode($s['student_id']); ?>" class="btn btn-sm btn-outline-info"><i class="fas fa-eye"></i></a>
+                                <button class="btn btn-sm btn-outline-primary btn-edit" data-student="<?php echo $student_json_html; ?>"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-sm btn-outline-danger btn-delete" data-id="<?php echo (int)$s['id']; ?>"><i class="fas fa-trash"></i></button>
                             </td>
                         </tr>
                         <?php endforeach; ?>
@@ -174,257 +262,84 @@ while ($row = $result->fetch_assoc()) {
             </div>
         </div>
     </div>
-</div>
 
-<!-- Add Student Modal -->
-<div class="modal fade" id="addStudentModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Add New Student</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <!-- Mobile Cards -->
+    <div class="d-md-none">
+        <?php foreach($students as $s): 
+            $student_json_html = htmlspecialchars(json_encode($s, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP), ENT_QUOTES, 'UTF-8');
+        ?>
+            <div class="card mb-3 shadow-sm student-card" data-student-id="<?php echo $s['student_id']; ?>" data-class-id="<?php echo $s['class_id']; ?>">
+                <div class="row g-0 align-items-center">
+                    <div class="col-3 text-center p-2">
+                        <img src="<?php echo $s['profile_picture'] ?: 'uploads/profile_pictures/default.svg'; ?>" class="img-fluid rounded-circle" style="width:60px;height:60px;object-fit:cover;">
+                    </div>
+                    <div class="col-9 p-2">
+                        <h6 class="mb-1"><?php echo htmlspecialchars($s['first_name'].' '.$s['last_name']); ?></h6>
+                        <p class="mb-0 small">Roll No: <?php echo htmlspecialchars($s['student_id']); ?></p>
+                        <p class="mb-0 small">Email: <?php echo htmlspecialchars($s['email']); ?></p>
+                        <p class="mb-0 small">Phone: <?php echo htmlspecialchars($s['phone']); ?></p>
+                        <p class="mb-0 small">Class: <?php echo htmlspecialchars($s['class_name'].' '.$s['section']); ?></p>
+                        <span class="badge bg-<?php echo ($s['status']=='Active') ? 'success' : (($s['status']=='Inactive') ? 'warning' : 'secondary'); ?>">
+                            <?php echo htmlspecialchars($s['status'] ?? 'Active'); ?>
+                        </span>
+                        <div class="mt-1 text-end">
+                            <a href="student_info.php?student_id=<?php echo urlencode($s['student_id']); ?>" class="btn btn-sm btn-outline-info"><i class="fas fa-eye"></i></a>
+                            <button class="btn btn-sm btn-outline-primary btn-edit" data-student='<?php echo $student_json_html; ?>'><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-outline-danger btn-delete" data-id="<?php echo (int)$s['id']; ?>"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <form method="POST">
-                <div class="modal-body">
-                    <input type="hidden" name="action" value="add">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="student_id" class="form-label">Student ID *</label>
-                            <input type="text" class="form-control" id="student_id" name="student_id" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="class_id" class="form-label">Class *</label>
-                            <select class="form-select" id="class_id" name="class_id" required>
-                                <option value="">Select Class</option>
-                                <?php foreach ($classes as $class): ?>
-                                <option value="<?php echo $class['id']; ?>">
-                                    <?php echo htmlspecialchars($class['class_name'] . ' ' . $class['section']); ?>
-                                </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="first_name" class="form-label">First Name *</label>
-                            <input type="text" class="form-control" id="first_name" name="first_name" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="last_name" class="form-label">Last Name *</label>
-                            <input type="text" class="form-control" id="last_name" name="last_name" required>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="email" class="form-label">Email *</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="phone" class="form-label">Phone</label>
-                            <input type="tel" class="form-control" id="phone" name="phone">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="date_of_birth" class="form-label">Date of Birth</label>
-                            <input type="date" class="form-control" id="date_of_birth" name="date_of_birth">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="gender" class="form-label">Gender</label>
-                            <select class="form-select" id="gender" name="gender">
-                                <option value="">Select Gender</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="address" class="form-label">Address</label>
-                        <textarea class="form-control" id="address" name="address" rows="3"></textarea>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="parent_name" class="form-label">Parent/Guardian Name</label>
-                            <input type="text" class="form-control" id="parent_name" name="parent_name">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="parent_phone" class="form-label">Parent/Guardian Phone</label>
-                            <input type="tel" class="form-control" id="parent_phone" name="parent_phone">
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="admission_date" class="form-label">Admission Date</label>
-                        <input type="date" class="form-control" id="admission_date" name="admission_date">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Add Student</button>
-                </div>
-            </form>
-        </div>
+        <?php endforeach; ?>
     </div>
 </div>
 
-<!-- Edit Student Modal -->
-<div class="modal fade" id="editStudentModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Edit Student</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <form method="POST">
-                <div class="modal-body">
-                    <input type="hidden" name="action" value="edit">
-                    <input type="hidden" name="id" id="edit_id">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="edit_student_id" class="form-label">Student ID *</label>
-                            <input type="text" class="form-control" id="edit_student_id" name="student_id" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="edit_class_id" class="form-label">Class *</label>
-                            <select class="form-select" id="edit_class_id" name="class_id" required>
-                                <option value="">Select Class</option>
-                                <?php foreach ($classes as $class): ?>
-                                <option value="<?php echo $class['id']; ?>">
-                                    <?php echo htmlspecialchars($class['class_name'] . ' ' . $class['section']); ?>
-                                </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="edit_first_name" class="form-label">First Name *</label>
-                            <input type="text" class="form-control" id="edit_first_name" name="first_name" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="edit_last_name" class="form-label">Last Name *</label>
-                            <input type="text" class="form-control" id="edit_last_name" name="last_name" required>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="edit_email" class="form-label">Email *</label>
-                            <input type="email" class="form-control" id="edit_email" name="email" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="edit_phone" class="form-label">Phone</label>
-                            <input type="tel" class="form-control" id="edit_phone" name="phone">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="edit_date_of_birth" class="form-label">Date of Birth</label>
-                            <input type="date" class="form-control" id="edit_date_of_birth" name="date_of_birth">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="edit_gender" class="form-label">Gender</label>
-                            <select class="form-select" id="edit_gender" name="gender">
-                                <option value="">Select Gender</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="edit_address" class="form-label">Address</label>
-                        <textarea class="form-control" id="edit_address" name="address" rows="3"></textarea>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="edit_parent_name" class="form-label">Parent/Guardian Name</label>
-                            <input type="text" class="form-control" id="edit_parent_name" name="parent_name">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="edit_parent_phone" class="form-label">Parent/Guardian Phone</label>
-                            <input type="tel" class="form-control" id="edit_parent_phone" name="parent_phone">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="edit_admission_date" class="form-label">Admission Date</label>
-                            <input type="date" class="form-control" id="edit_admission_date" name="admission_date">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="edit_status" class="form-label">Status</label>
-                            <select class="form-select" id="edit_status" name="status">
-                                <option value="Active">Active</option>
-                                <option value="Inactive">Inactive</option>
-                                <option value="Graduated">Graduated</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Update Student</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Confirm Delete</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to delete this student? This action cannot be undone.
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form method="POST" style="display: inline;">
-                    <input type="hidden" name="action" value="delete">
-                    <input type="hidden" name="id" id="delete_id">
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+<?php include 'modals/student_modals.php'; ?>
+<script src="assets/js/students.js"></script>
 
 <script>
-function editStudent(student) {
-    document.getElementById('edit_id').value = student.id;
-    document.getElementById('edit_student_id').value = student.student_id;
-    document.getElementById('edit_first_name').value = student.first_name;
-    document.getElementById('edit_last_name').value = student.last_name;
-    document.getElementById('edit_email').value = student.email;
-    document.getElementById('edit_phone').value = student.phone;
-    document.getElementById('edit_date_of_birth').value = student.date_of_birth;
-    document.getElementById('edit_gender').value = student.gender;
-    document.getElementById('edit_address').value = student.address;
-    document.getElementById('edit_class_id').value = student.class_id;
-    document.getElementById('edit_parent_name').value = student.parent_name;
-    document.getElementById('edit_parent_phone').value = student.parent_phone;
-    document.getElementById('edit_admission_date').value = student.admission_date;
-    document.getElementById('edit_status').value = student.status;
-    
-    new bootstrap.Modal(document.getElementById('editStudentModal')).show();
-}
+// Combined Filters
+const classFilter = document.getElementById('classFilter');
+const nameFilter = document.getElementById('nameFilter');
+const idFilter = document.getElementById('idFilter');
 
-function deleteStudent(id) {
-    document.getElementById('delete_id').value = id;
-    new bootstrap.Modal(document.getElementById('deleteModal')).show();
-}
+function applyFilters() {
+    const selectedClass = classFilter.value.toLowerCase();
+    const nameValue = nameFilter.value.toLowerCase();
+    const idValue = idFilter.value.toLowerCase();
 
-// Initialize DataTable
-$(document).ready(function() {
-    $('#studentsTable').DataTable({
-        "pageLength": 25,
-        "order": [[ 0, "desc" ]]
+    // PC Table
+    document.querySelectorAll('.student-row').forEach(row => {
+        const rowClass = row.getAttribute('data-class-id').toLowerCase();
+        const studentName = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+        const studentId = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+
+        const show = 
+            (selectedClass === "" || rowClass === selectedClass) &&
+            (nameValue === "" || studentName.includes(nameValue)) &&
+            (idValue === "" || studentId.includes(idValue));
+
+        row.style.display = show ? '' : 'none';
     });
+
+    // Mobile Cards
+    document.querySelectorAll('.student-card').forEach(card => {
+        const cardClass = card.getAttribute('data-class-id').toLowerCase();
+        const studentName = card.querySelector('h6').textContent.toLowerCase();
+        const studentId = card.querySelector('p.small').textContent.toLowerCase();
+
+        const show = 
+            (selectedClass === "" || cardClass === selectedClass) &&
+            (nameValue === "" || studentName.includes(nameValue)) &&
+            (idValue === "" || studentId.includes(idValue));
+
+        card.style.display = show ? '' : 'none';
+    });
+}
+
+[classFilter, nameFilter, idFilter].forEach(el => {
+    el.addEventListener('input', applyFilters);
 });
 </script>
 
 <?php require_once 'includes/footer.php'; ?>
-

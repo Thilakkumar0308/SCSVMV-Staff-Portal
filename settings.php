@@ -14,8 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $action = $_POST['action'];
         
         if ($action == 'update_settings') {
-            $school_name = sanitize_input($_POST['school_name']);
-            $school_address = sanitize_input($_POST['school_address']);
+            $university_name = sanitize_input($_POST['university_name']);
+            $university_address = sanitize_input($_POST['university_address']);
             $academic_year = sanitize_input($_POST['academic_year']);
             $max_leave_days = (int)$_POST['max_leave_days'];
             $attendance_threshold = (int)$_POST['attendance_threshold'];
@@ -29,8 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $message_type = 'danger';
             } else {
                 $settings = [
-                    'school_name' => $school_name,
-                    'school_address' => $school_address,
+                    'university_name' => $university_name,
+                    'university_address' => $university_address,
                     'academic_year' => $academic_year,
                     'max_leave_days' => $max_leave_days,
                     'attendance_threshold' => $attendance_threshold
@@ -156,8 +156,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 // Get current settings
 $current_settings = [
-    'school_name' => get_setting('school_name', 'ABC School'),
-    'school_address' => get_setting('school_address', '123 Education Street, City, State'),
+    'university_name' => get_setting('university_name', 'SCSVMV University'),
+    'university_address' => get_setting('university_address', 'Sri Chandrasekharendra Saraswathi Viswa Mahavidyalaya, Kanchipuram'),
     'academic_year' => get_setting('academic_year', '2024-2025'),
     'max_leave_days' => get_setting('max_leave_days', '30'),
     'attendance_threshold' => get_setting('attendance_threshold', '75')
@@ -227,15 +227,15 @@ while ($row = $result->fetch_assoc()) {
                         <input type="hidden" name="action" value="update_settings">
                         <div class="row">
                             <div class="col-md-6">
-                                <h5 class="mb-3">School Information</h5>
+                                <h5 class="mb-3">University Information</h5>
                                 <div class="mb-3">
-                                    <label for="school_name" class="form-label">School Name *</label>
-                                    <input type="text" class="form-control" id="school_name" name="school_name" 
-                                           value="<?php echo htmlspecialchars($current_settings['school_name']); ?>" required>
+                                    <label for="university_name" class="form-label">University Name *</label>
+                                    <input type="text" class="form-control" id="university_name" name="university_name" 
+                                           value="<?php echo htmlspecialchars($current_settings['university_name']); ?>" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="school_address" class="form-label">School Address *</label>
-                                    <textarea class="form-control" id="school_address" name="school_address" rows="3" required><?php echo htmlspecialchars($current_settings['school_address']); ?></textarea>
+                                    <label for="university_address" class="form-label">University Address *</label>
+                                    <textarea class="form-control" id="university_address" name="university_address" rows="3" required><?php echo htmlspecialchars($current_settings['university_address']); ?></textarea>
                                 </div>
                                 <div class="mb-3">
                                     <label for="academic_year" class="form-label">Academic Year *</label>

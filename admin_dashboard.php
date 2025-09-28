@@ -72,6 +72,7 @@ $overall_stats['active_disciplinary'] = $result->fetch_assoc()['total'];
     <!-- Overall Statistics -->
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6 mb-4">
+             <a href="students.php" class="text-decoration-none">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -88,10 +89,12 @@ $overall_stats['active_disciplinary'] = $result->fetch_assoc()['total'];
                         </div>
                     </div>
                 </div>
+                </a>
             </div>
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
+            <a href="department_management.php" class="text-decoration-none">
             <div class="card border-left-success shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -109,9 +112,11 @@ $overall_stats['active_disciplinary'] = $result->fetch_assoc()['total'];
                     </div>
                 </div>
             </div>
+</a>
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
+            <a href="leave.php" class="text-decoration-none">
             <div class="card border-left-warning shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -129,9 +134,11 @@ $overall_stats['active_disciplinary'] = $result->fetch_assoc()['total'];
                     </div>
                 </div>
             </div>
+</a>
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
+            <a href="onduty.php" class="text-decoration-none">
             <div class="card border-left-info shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -150,6 +157,7 @@ $overall_stats['active_disciplinary'] = $result->fetch_assoc()['total'];
                 </div>
             </div>
         </div>
+</a>
     </div>
 
     <!-- Department-wise Management -->
@@ -253,7 +261,7 @@ $overall_stats['active_disciplinary'] = $result->fetch_assoc()['total'];
                 <h5 class="modal-title">Add New Department</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST" action="ajax/manage_department.php">
+            <form method="POST" action="ajax/manage_department.php" class="add-form add-department-form">
                 <div class="modal-body">
                     <input type="hidden" name="action" value="add">
                     <div class="mb-3">
@@ -285,18 +293,6 @@ $overall_stats['active_disciplinary'] = $result->fetch_assoc()['total'];
         </div>
     </div>
 </div>
-
-<script>
-// Initialize DataTable
-$(document).ready(function() {
-    $('#departmentsTable').DataTable({
-        "pageLength": 25,
-        "order": [[ 0, "asc" ]],
-        "columnDefs": [
-            { "orderable": false, "targets": 7 }
-        ]
-    });
-});
-</script>
-
+<!-- End Add Department Modal -->
 <?php require_once 'includes/footer.php'; ?>
+

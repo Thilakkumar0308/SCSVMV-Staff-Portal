@@ -11,6 +11,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $action = $_POST['action'];
         
         if ($action == 'add') {
+            // Teachers and Admin/HOD can submit requests, others blocked
+            if (!(has_any_role(['Teacher','HOD','Admin']))) { redirect('dashboard.php'); }
             $student_id = $_POST['student_id'];
             $leave_type = $_POST['leave_type'];
             $start_date = $_POST['start_date'];
@@ -30,6 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         
         elseif ($action == 'approve') {
+            // Only HOD or Admin can approve
+            if (!has_any_role(['HOD','Admin'])) { redirect('dashboard.php'); }
             $id = $_POST['id'];
             $stmt = $conn->prepare("UPDATE leave_requests SET status = 'Approved', approved_by = ?, approved_at = NOW() WHERE id = ?");
             $stmt->bind_param("ii", $_SESSION['user_id'], $id);
@@ -44,6 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         
         elseif ($action == 'reject') {
+            // Only HOD or Admin can reject
+            if (!has_any_role(['HOD','Admin'])) { redirect('dashboard.php'); }
             $id = $_POST['id'];
             $stmt = $conn->prepare("UPDATE leave_requests SET status = 'Rejected', approved_by = ?, approved_at = NOW() WHERE id = ?");
             $stmt->bind_param("ii", $_SESSION['user_id'], $id);
@@ -58,6 +64,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         
         elseif ($action == 'delete') {
+            // Only Admin can hard delete
+            if (!has_role('Admin')) { redirect('dashboard.php'); }
             $id = $_POST['id'];
             $stmt = $conn->prepare("DELETE FROM leave_requests WHERE id = ?");
             $stmt->bind_param("i", $id);
@@ -253,7 +261,7 @@ $type_filter = isset($_GET['type']) ? $_GET['type'] : '';
                 <h5 class="modal-title">New Leave Request</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST">
+            <form method="POST" class="add-form add-leave-form">
                 <div class="modal-body">
                     <input type="hidden" name="action" value="add">
                     <div class="row">

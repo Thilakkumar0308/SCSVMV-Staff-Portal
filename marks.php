@@ -350,7 +350,7 @@ while ($row = $result->fetch_assoc()) {
                 <h5 class="modal-title">Add Marks</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST">
+            <form method="POST" class="add-form add-marks-form">
                 <div class="modal-body">
                     <input type="hidden" name="action" value="add">
                     <div class="row">
@@ -426,7 +426,7 @@ while ($row = $result->fetch_assoc()) {
                 <h5 class="modal-title">Edit Marks</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST">
+            <form method="POST" class="add-form edit-marks-form">
                 <div class="modal-body">
                     <input type="hidden" name="action" value="edit">
                     <input type="hidden" name="id" id="edit_id">

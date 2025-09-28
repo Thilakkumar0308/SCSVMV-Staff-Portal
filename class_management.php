@@ -196,32 +196,5 @@ if (has_role('Admin')) {
 <!-- Modals for Add/Edit/Delete (same as your version, no major change) -->
 <?php require_once 'includes/class-modals.php'; ?>
 
-<script>
-function editClass(classData) {
-    document.getElementById('edit_id').value = classData.id;
-    document.getElementById('edit_class_name').value = classData.class_name;
-    document.getElementById('edit_section').value = classData.section;
-    document.getElementById('edit_academic_year').value = classData.academic_year;
-    <?php if (has_role('Admin')): ?>
-    document.getElementById('edit_department_id').value = classData.department_id;
-    <?php endif; ?>
-    new bootstrap.Modal(document.getElementById('editClassModal')).show();
-}
-
-function deleteClass(id) {
-    document.getElementById('delete_id').value = id;
-    new bootstrap.Modal(document.getElementById('deleteModal')).show();
-}
-
-$(document).ready(function() {
-    $('#classesTable').DataTable({
-        "pageLength": 25,
-        "order": [[0, "asc"]],
-        "columnDefs": [
-            { "orderable": false, "targets": -1 }
-        ]
-    });
-});
-</script>
 
 <?php require_once 'includes/footer.php'; ?>

@@ -97,7 +97,7 @@ echo "<p class='info'>Creating Department Admin user...</p>";
 
 $deptadmin_username = 'deptadmin';
 $deptadmin_password = password_hash('deptadmin123', PASSWORD_DEFAULT);
-$deptadmin_email = 'deptadmin@school.com';
+$deptadmin_email = 'deptadmin@scsvmv.ac.in';
 $deptadmin_role = 'DeptAdmin';
 $deptadmin_full_name = 'Department Administrator';
 
@@ -114,11 +114,11 @@ if ($stmt->execute()) {
 echo "<p class='info'>Creating HOD users for each department...</p>";
 
 $hod_users = [
-    ['hod_cse', 'hod123', 'hod.cse@school.com', 'HOD Computer Science', 1],
-    ['hod_math', 'hod123', 'hod.math@school.com', 'HOD Mathematics', 2],
-    ['hod_science', 'hod123', 'hod.science@school.com', 'HOD Science', 3],
-    ['hod_english', 'hod123', 'hod.english@school.com', 'HOD English', 4],
-    ['hod_commerce', 'hod123', 'hod.commerce@school.com', 'HOD Commerce', 5]
+    ['hod_cse', 'hod123', 'hod.cse@scsvmv.ac.in', 'HOD Computer Science', 1],
+    ['hod_math', 'hod123', 'hod.math@scsvmv.ac.in', 'HOD Mathematics', 2],
+    ['hod_science', 'hod123', 'hod.science@scsvmv.ac.in', 'HOD Science', 3],
+    ['hod_english', 'hod123', 'hod.english@scsvmv.ac.in', 'HOD English', 4],
+    ['hod_commerce', 'hod123', 'hod.commerce@scsvmv.ac.in', 'HOD Commerce', 5]
 ];
 
 foreach ($hod_users as $hod) {

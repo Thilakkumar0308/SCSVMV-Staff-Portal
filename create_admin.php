@@ -55,7 +55,7 @@ if ($result->num_rows > 0) {
     // Create admin user
     $username = 'admin';
     $password = 'admin123';
-    $email = 'admin@school.com';
+    $email = 'admin@scsvmv.ac.in';
     $role = 'Admin';
     $full_name = 'System Administrator';
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);

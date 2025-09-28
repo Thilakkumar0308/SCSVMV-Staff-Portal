@@ -200,26 +200,5 @@ require_once 'includes/header.php';
     <?php endif; ?>
 </div>
 
-<style>
-/* Dashboard Styles (UI only, theme comes from header/footer) */
-.card { border-radius: 15px; border: none; }
-.dashboard-card {
-    position: relative;
-    overflow: hidden;
-    color: #fff;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-    transition: transform 0.3s ease;
-}
-.dashboard-card:hover { transform: translateY(-5px); }
-.card-icon { position: absolute; right:20px; bottom:20px; font-size:2rem; opacity:0.2; }
-.gradient-blue { background: linear-gradient(135deg,#1e3c72,#2a5298); }
-.gradient-green { background: linear-gradient(135deg,#1e6f5c,#28a745); }
-.gradient-yellow { background: linear-gradient(135deg,#f0ad4e,#ffc107); }
-.gradient-purple { background: linear-gradient(135deg,#764ba2,#9a5edd); }
-.glass-card { background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); color: #fff; box-shadow:0 8px 25px rgba(0,0,0,0.5); }
-.card-header { font-weight:bold; font-size:16px; border-bottom:1px solid rgba(255,255,255,0.1); }
-.btn-gradient { background: linear-gradient(135deg,#764baa,#9a5edd); border:none;color:#fff;padding:4px 12px;border-radius:20px;transition:all 0.3s;}
-.btn-gradient:hover { background: linear-gradient(135deg,#9a5edd,#764baa); box-shadow:0 0 15px rgba(118,75,162,0.7); }
-</style>
 
 <?php require_once 'includes/footer.php'; ?>

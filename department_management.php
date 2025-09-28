@@ -51,6 +51,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         
         elseif ($action == 'delete') {
+            // Enforce: only Admins can delete departments
+            if (!has_role('Admin')) {
+                $message = 'Only Admin users can delete departments.';
+                $message_type = 'danger';
+                return;
+            }
             $id = $_POST['id'];
             
             // Check if department has classes or users
@@ -85,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// Get all departments with statistics
+// ✅ FIXED: Get ALL departments with statistics (removed WHERE + LIMIT)
 $query = "
     SELECT d.*, 
            u.full_name as hod_name,
@@ -156,9 +162,7 @@ while ($row = $result->fetch_assoc()) {
                     <tbody>
                         <?php foreach ($departments as $dept): ?>
                         <tr>
-                            <td>
-                                <strong><?php echo htmlspecialchars($dept['department_name']); ?></strong>
-                            </td>
+                            <td><strong><?php echo htmlspecialchars($dept['department_name']); ?></strong></td>
                             <td>
                                 <?php if ($dept['description']): ?>
                                     <?php echo htmlspecialchars(substr($dept['description'], 0, 50)); ?>
@@ -174,15 +178,9 @@ while ($row = $result->fetch_assoc()) {
                                     <span class="badge bg-warning">No HOD Assigned</span>
                                 <?php endif; ?>
                             </td>
-                            <td>
-                                <span class="badge bg-primary"><?php echo $dept['class_count']; ?></span>
-                            </td>
-                            <td>
-                                <span class="badge bg-info"><?php echo $dept['student_count']; ?></span>
-                            </td>
-                            <td>
-                                <span class="badge bg-secondary"><?php echo $dept['user_count']; ?></span>
-                            </td>
+                            <td><span class="badge bg-primary"><?php echo $dept['class_count']; ?></span></td>
+                            <td><span class="badge bg-info"><?php echo $dept['student_count']; ?></span></td>
+                            <td><span class="badge bg-secondary"><?php echo $dept['user_count']; ?></span></td>
                             <td><?php echo date('M d, Y', strtotime($dept['created_at'])); ?></td>
                             <td>
                                 <div class="btn-group btn-group-sm">
@@ -195,9 +193,11 @@ while ($row = $result->fetch_assoc()) {
                                     <a href="class_management.php?department=<?php echo $dept['id']; ?>" class="btn btn-outline-success" title="View Classes">
                                         <i class="fas fa-chalkboard"></i>
                                     </a>
+                                    <?php if (has_role('Admin')): ?>
                                     <button class="btn btn-outline-danger" onclick="deleteDepartment(<?php echo $dept['id']; ?>, '<?php echo htmlspecialchars($dept['department_name']); ?>', <?php echo $dept['class_count']; ?>, <?php echo $dept['user_count']; ?>)">
                                         <i class="fas fa-trash"></i>
                                     </button>
+                                    <?php endif; ?>
                                 </div>
                             </td>
                         </tr>
@@ -217,7 +217,7 @@ while ($row = $result->fetch_assoc()) {
                 <h5 class="modal-title">Add New Department</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST">
+            <form method="POST" class="add-form add-department-form">
                 <div class="modal-body">
                     <input type="hidden" name="action" value="add">
                     <div class="mb-3">
@@ -257,7 +257,7 @@ while ($row = $result->fetch_assoc()) {
                 <h5 class="modal-title">Edit Department</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST">
+            <form method="POST" class="add-form edit-department-form">
                 <div class="modal-body">
                     <input type="hidden" name="action" value="edit">
                     <input type="hidden" name="id" id="edit_id">
