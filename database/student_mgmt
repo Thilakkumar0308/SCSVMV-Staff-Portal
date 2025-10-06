@@ -1,0 +1,283 @@
+-- ================================================
+-- Student Management System Database Schema
+-- Updated with last_login column
+-- XAMPP Default: host=localhost, user=root, password="", db=student_mgmt
+-- ================================================
+
+-- Drop tables if exist
+DROP TABLE IF EXISTS attendance;
+DROP TABLE IF EXISTS timetable;
+DROP TABLE IF EXISTS marks;
+DROP TABLE IF EXISTS disciplinary_actions;
+DROP TABLE IF EXISTS onduty_requests;
+DROP TABLE IF EXISTS leave_requests;
+DROP TABLE IF EXISTS students;
+DROP TABLE IF EXISTS subjects;
+DROP TABLE IF EXISTS classes;
+DROP TABLE IF EXISTS departments;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS settings;
+DROP TABLE IF EXISTS teacher_classes;
+
+-- ================================================
+-- Users table for authentication
+-- ================================================
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    role ENUM('Admin', 'DeptAdmin', 'HOD', 'Teacher', 'Student') NOT NULL,
+    full_name VARCHAR(100) NOT NULL,
+    department_id INT NULL,
+    last_login DATETIME NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- ================================================
+-- Departments table
+-- ================================================
+CREATE TABLE departments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    department_name VARCHAR(100) UNIQUE NOT NULL,
+    description TEXT NULL,
+    hod_id INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (hod_id) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+-- Add foreign key to users table after departments
+ALTER TABLE users 
+ADD CONSTRAINT fk_user_department FOREIGN KEY (department_id) REFERENCES departments(id) ON DELETE SET NULL;
+
+-- ================================================
+-- Classes table
+-- ================================================
+CREATE TABLE classes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    class_name VARCHAR(50) NOT NULL,
+    section VARCHAR(10) NOT NULL,
+    academic_year VARCHAR(20) NOT NULL,
+    department_id INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (department_id) REFERENCES departments(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+-- ================================================
+-- Subjects table
+-- ================================================
+CREATE TABLE subjects (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    subject_name VARCHAR(100) NOT NULL,
+    subject_code VARCHAR(20) UNIQUE NOT NULL,
+    class_id INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ================================================
+-- Students table
+-- ================================================
+CREATE TABLE students (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id VARCHAR(20) UNIQUE NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    phone VARCHAR(15) NULL,
+    date_of_birth DATE NULL,
+    gender ENUM('Male','Female','Other') NULL,
+    address TEXT NULL,
+    class_id INT NULL,
+    parent_name VARCHAR(100) NULL,
+    parent_phone VARCHAR(15) NULL,
+    admission_date DATE NULL,
+    profile_picture VARCHAR(255) NULL,
+    status ENUM('Active','Inactive','Graduated') DEFAULT 'Active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+-- ================================================
+-- Leave Requests table
+-- ================================================
+CREATE TABLE leave_requests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    leave_type ENUM('Medical','Personal','Emergency') NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    reason TEXT NOT NULL,
+    status ENUM('Pending','Approved','Rejected') DEFAULT 'Pending',
+    approved_by INT NULL,
+    approved_at TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+    FOREIGN KEY (approved_by) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+-- ================================================
+-- On-duty Requests table
+-- ================================================
+CREATE TABLE onduty_requests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    event_name VARCHAR(200) NOT NULL,
+    event_date DATE NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    venue VARCHAR(200) NULL,
+    reason TEXT NOT NULL,
+    status ENUM('Pending','Approved','Rejected') DEFAULT 'Pending',
+    approved_by INT NULL,
+    approved_at TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+    FOREIGN KEY (approved_by) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+-- ================================================
+-- Disciplinary Actions table
+-- ================================================
+CREATE TABLE disciplinary_actions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    action_type ENUM('Warning','Suspension','Expulsion','Detention') NOT NULL,
+    description TEXT NOT NULL,
+    action_date DATE NOT NULL,
+    imposed_by INT NOT NULL,
+    status ENUM('Active','Resolved','Expired') DEFAULT 'Active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+    FOREIGN KEY (imposed_by) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ================================================
+-- Marks table
+-- ================================================
+CREATE TABLE marks (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    subject_id INT NOT NULL,
+    exam_type ENUM('Quiz','Midterm','Final','Assignment','Project') NOT NULL,
+    marks_obtained DECIMAL(5,2) NOT NULL,
+    total_marks DECIMAL(5,2) NOT NULL,
+    exam_date DATE NOT NULL,
+    remarks TEXT NULL,
+    created_by INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+    FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ================================================
+-- Timetable table
+-- ================================================
+CREATE TABLE timetable (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    class_id INT NOT NULL,
+    subject_id INT NOT NULL,
+    teacher_id INT NULL,
+    day_of_week ENUM('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday') NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    room VARCHAR(50) NULL,
+    academic_year VARCHAR(20) NOT NULL,
+    created_by INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE,
+    FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE,
+    FOREIGN KEY (teacher_id) REFERENCES users(id) ON DELETE SET NULL,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ================================================
+-- Attendance table
+-- ================================================
+CREATE TABLE attendance (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    class_id INT NOT NULL,
+    subject_id INT NOT NULL,
+    attendance_date DATE NOT NULL,
+    status ENUM('Present','Absent','Late','Excused') NOT NULL,
+    remarks TEXT NULL,
+    marked_by INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_attendance(student_id, class_id, subject_id, attendance_date),
+    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+    FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE,
+    FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE,
+    FOREIGN KEY (marked_by) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ================================================
+-- Settings table
+-- ================================================
+CREATE TABLE settings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    setting_key VARCHAR(100) UNIQUE NOT NULL,
+    setting_value TEXT NULL,
+    description TEXT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- ================================================
+-- Teacher Classes table
+-- ================================================
+CREATE TABLE teacher_classes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    teacher_id INT NOT NULL,
+    class_id INT NOT NULL,
+    assigned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_assignment(teacher_id, class_id),
+    FOREIGN KEY (teacher_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ================================================
+-- Insert initial data
+-- ================================================
+-- Departments
+INSERT INTO departments (id, department_name, description) VALUES
+(1, 'CSA', 'Computer Science and Applications Department');
+
+-- Users (password: password)
+INSERT INTO users (username, password, email, role, full_name, department_id) VALUES
+('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin@scsvmv.ac.in', 'Admin', 'System Administrator', NULL),
+('deptadmin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'deptadmin@scsvmv.ac.in', 'DeptAdmin', 'Department Administrator', NULL),
+('hod_csa', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'hod.csa@scsvmv.ac.in', 'HOD', 'HOD Computer Science', 1);
+
+-- Assign HOD to department
+UPDATE departments SET hod_id = (SELECT id FROM users WHERE username='hod_csa') WHERE id=1;
+
+-- Settings
+INSERT INTO settings (setting_key, setting_value, description) VALUES
+('university_name', 'SCSVMV University', 'Name of the university'),
+('university_address', 'Sri Jayendra Saraswathi Street, Enathur, Tamil Nadu 631561', 'University address'),
+('academic_year', '2024-2025', 'Current academic year'),
+('max_leave_days', '30', 'Maximum leave days per student per year'),
+('attendance_threshold', '75', 'Minimum attendance percentage required');
+
+-- Sample Classes
+INSERT INTO classes (class_name, section, academic_year, department_id) VALUES
+('MCA', 'I', '2025-2027', 1),
+('MCA', 'II', '2024-2026', 1);
+
+-- Sample Subjects
+INSERT INTO subjects (subject_name, subject_code, class_id) VALUES
+('Mobile Application Development', 'MCAF203T10', 1),
+('Web Technology', 'MCAF203T20', 1),
+('Cloud Computing', 'MCAF203T30', 1),
+('Elective - Agile Software Development', 'MCAF203E2B', 1),
+('Elective - Software Project', 'MCAF203E3B', 1),
+('Mobile Application Development Lab', 'MCAF203P60', 1),
+('Web Technology Lab', 'MCAF203P70', 1),
+('Mini Project', 'MCAF203P80', 1),
+('Online Course', 'MCAF203OC1', 1);

@@ -1,0 +1,723 @@
+/* ===============================
+   Global Styles - Student Management System
+   =============================== */
+
+/* -------------------------------
+   Base Styles
+---------------------------------*/
+body {
+    font-family: 'Poppins', Arial, sans-serif;
+    margin: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    overflow-x: hidden;
+}
+
+/* -------------------------------
+   Login Page Styles
+---------------------------------*/
+.login-body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* -------------------------------
+   Top Bar
+---------------------------------*/
+.top-bar {
+    background: #0d6efd;
+    color: #fff;
+    font-size: 14px;
+}
+
+.top-bar a {
+    color: #fff;
+    text-decoration: none;
+}
+
+/* -------------------------------
+   Navbar
+---------------------------------*/
+.navbar {
+    background-color: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* -------------------------------
+   Dropdown Menu
+---------------------------------*/
+.dropdown-menu {
+    background-color: rgba(0, 0, 0, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+}
+
+.dropdown-item {
+    color: #fff;
+    padding: 10px 15px;
+    transition: all 0.3s ease;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(118, 75, 162, 0.8);
+    color: #fff;
+}
+
+.dropdown-item i {
+    width: 20px;
+    text-align: center;
+}
+
+.dropdown-toggle::after {
+    margin-left: 8px;
+}
+
+.navbar-logo h5,
+.navbar-logo small {
+    margin: 0;
+    color: #fff;
+}
+
+.navbar-logo small {
+    color: #ccc;
+}
+
+.hamburger {
+    font-size: 24px;
+    cursor: pointer;
+    color: #fff;
+}
+
+/* -------------------------------
+   Sidebar
+---------------------------------*/
+.sidebar {
+    height: 100vh;
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: -250px;
+    background: #222;
+    color: #fff;
+    transition: 0.3s;
+    z-index: 1050;
+    padding-top: 70px;
+}
+
+.sidebar a {
+    display: block;
+    color: #fff;
+    padding: 14px 20px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.sidebar a:hover {
+    background: linear-gradient(90deg, #0d6efd, #6610f2);
+    color: #fff;
+}
+
+.sidebar .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+/* -------------------------------
+   Main Content
+---------------------------------*/
+#main-content {
+    transition: margin-left 0.3s;
+    padding: 20px;
+}
+
+/* -------------------------------
+   Cards
+---------------------------------*/
+.card {
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.dashboard-card {
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+}
+
+.card-icon {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    font-size: 2rem;
+    opacity: 0.2;
+}
+
+.glass-card {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    color: #fff;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+}
+
+.card-header {
+    font-weight: bold;
+    font-size: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.35);
+    color: #fff;
+}
+
+.card-header .card-title,
+.card-title {
+    color: #fff;
+}
+
+/* -------------------------------
+   Dashboard Gradients
+---------------------------------*/
+.gradient-blue {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+}
+
+.gradient-green {
+    background: linear-gradient(135deg, #1e6f5c, #28a745);
+}
+
+.gradient-yellow {
+    background: linear-gradient(135deg, #f0ad4e, #ffc107);
+}
+
+.gradient-purple {
+    background: linear-gradient(135deg, #764ba2, #9a5edd);
+}
+
+/* -------------------------------
+   Buttons
+---------------------------------*/
+.btn-primary {
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 10px rgba(118, 75, 162, 0.3);
+}
+
+.btn-primary:hover {
+    background-color: #5a3e99;
+    box-shadow: 0 0 20px rgba(118, 75, 162, 0.8), 0 0 40px rgba(118, 75, 162, 0.6);
+    transform: translateY(-2px);
+}
+
+.btn-outline-light {
+    border: 1px solid #fff;
+    color: #fff;
+}
+
+.btn-outline-light:hover {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: #fff;
+}
+
+.btn-gradient {
+    background: linear-gradient(135deg, #764baa, #9a5edd);
+    border: none;
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 20px;
+    transition: all 0.3s;
+}
+
+.btn-gradient:hover {
+    background: linear-gradient(135deg, #9a5edd, #764baa);
+    box-shadow: 0 0 15px rgba(118, 75, 162, 0.7);
+}
+
+/* -------------------------------
+   University Logo
+---------------------------------*/
+.univ-logo {
+    display: block;
+    margin: 10px auto;
+}
+
+/* -------------------------------
+   Page Wrapper
+---------------------------------*/
+.page-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.flex-grow-1 {
+    flex: 1 0 auto;
+}
+
+/* -------------------------------
+   Responsive Design
+---------------------------------*/
+@media (max-width: 768px) {
+    #main-content {
+        margin-left: 0 !important;
+    }
+    
+    .sidebar {
+        width: 100%;
+        left: -100%;
+    }
+}
+
+/* -------------------------------
+   Form Enhancements
+---------------------------------*/
+.form-control:focus {
+    border-color: #764baa;
+    box-shadow: 0 0 8px rgba(118, 75, 162, 0.7);
+}
+
+/* -------------------------------
+   Table Enhancements
+---------------------------------*/
+.table-dark {
+    color: #fff;
+}
+
+.table-dark th {
+    background-color: rgba(0, 0, 0, 0.3);
+    color: #fff;
+}
+
+.table-dark td {
+    color: #fff;
+}
+
+/* -------------------------------
+   Modal Enhancements
+---------------------------------*/
+.modal-content {
+    border-radius: 15px;
+    border: none;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #764baa, #9a5edd);
+    color: #fff;
+    border-bottom: none;
+}
+
+/* -------------------------------
+   Alert Enhancements
+---------------------------------*/
+.alert {
+    border-radius: 10px;
+    border: none;
+}
+
+/* -------------------------------
+   Badge Enhancements
+---------------------------------*/
+.badge {
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+/* -------------------------------
+   Animation Classes
+---------------------------------*/
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* -------------------------------
+   Utility Classes
+---------------------------------*/
+.text-shadow {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.glass-effect {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* -------------------------------
+   DataTables Customization
+---------------------------------*/
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter,
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_processing,
+.dataTables_wrapper .dataTables_paginate {
+    color: #fff;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: #764baa !important;
+    color: #fff !important;
+    border-radius: 0.35rem;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #333;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dataTables_wrapper .dataTables_length select {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #333;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* -------------------------------
+   Profile Pictures
+---------------------------------*/
+.profile-picture {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.profile-picture:hover {
+    border-color: rgba(118, 75, 162, 0.8);
+    transform: scale(1.05);
+}
+
+.profile-picture-large {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.profile-picture-medium {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.profile-picture-small {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.profile-picture-upload {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.profile-picture-upload input[type="file"] {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.profile-picture-preview {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px dashed rgba(255, 255, 255, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.profile-picture-preview:hover {
+    border-color: rgba(118, 75, 162, 0.8);
+    background: rgba(118, 75, 162, 0.1);
+}
+
+.profile-picture-preview img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile-picture-placeholder {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+    text-align: center;
+}
+
+.profile-picture-upload-text {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 12px;
+    margin-top: 5px;
+    text-align: center;
+}
+
+/* Profile picture in tables */
+.table .profile-picture {
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+/* Profile picture in cards */
+.card .profile-picture {
+    float: left;
+    margin-right: 15px;
+    margin-bottom: 10px;
+}
+
+/* Profile picture in forms */
+.form-group .profile-picture-preview {
+    margin-bottom: 10px;
+}
+
+/* Profile picture upload area */
+.upload-area {
+    border: 2px dashed #0d6efd;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    background: rgba(13, 110, 253, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.upload-area:hover {
+    border-color: #0d6efd;
+    background: rgba(13, 110, 253, 0.2);
+    transform: translateY(-2px);
+}
+
+.upload-area.dragover {
+    border-color: #28a745;
+    background: rgba(40, 167, 69, 0.2);
+}
+
+.upload-icon {
+    font-size: 48px;
+    color: #0d6efd;
+    margin-bottom: 10px;
+}
+
+.upload-text {
+    color: #333;
+    font-size: 14px;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.upload-hint {
+    color: #666;
+    font-size: 12px;
+}
+
+.upload-filename {
+    color: #28a745;
+    font-size: 12px;
+    margin-top: 5px;
+    font-weight: 500;
+}
+
+.upload-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.upload-remove-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.upload-remove-btn:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+}
+
+/* Print Styles
+---------------------------------*/
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    body {
+        background: white !important;
+        color: black !important;
+    }
+    
+    .card {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+    }
+    
+    .profile-picture {
+        border: 1px solid #ccc !important;
+    }
+}
+
+/* Hover effect for student rows */
+.student-row:hover {
+    cursor: pointer;
+    background-color: #f1f1f1;
+}
+
+/* Profile images in table */
+.table img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* Responsive table for small screens */
+.table-responsive {
+    overflow-x: auto;
+}
+
+/* Modal images */
+.modal img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 50%;
+}
+
+/* Buttons spacing in modals or card actions */
+.btn-group .btn {
+    margin: 2px 2px;
+}
+
+/* Optional: adjust badge for mobile */
+.badge {
+    font-size: 0.85rem;
+}
+
+/* Optional: change table row pointer for mobile devices */
+@media (max-width: 768px) {
+    .student-row:hover {
+        background-color: #f9f9f9;
+    }
+}
+/* End of global.css */
+
+/* Sidebar Base Styling */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0; /* Hidden initially */
+    overflow-x: hidden;
+    background-color: #f8f9fa;
+    transition: width 0.3s ease;
+    z-index: 1040;
+    padding-top: 60px;
+}
+
+.sidebar.open {
+    /* Optional: Style changes when sidebar is open */
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+#main-content {
+    transition: margin-left 0.3s ease;
+    padding: 1rem;
+}
+/* Sidebar Base Styling */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -250px; /* Hide sidebar initially by pushing it left */
+  height: 100vh;
+  width: 250px;
+  background-color: #222; /* dark background */
+  color: #fff;
+  overflow-y: auto;
+  transition: left 0.3s ease;
+  z-index: 1050;
+  padding-top: 70px; /* adjust based on header height */
+}
+
+/* When sidebar is open */
+.sidebar.open {
+  left: 0; /* Slide sidebar into view */
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Main content adjusts margin on sidebar open */
+#main-content {
+  transition: margin-left 0.3s ease;
+  padding: 20px;
+}
+
+/* Shift main content when sidebar is open */
+@media (min-width: 769px) {
+  #main-content.sidebar-open {
+    margin-left: 250px;
+  }
+}
+
+/* Mobile view - sidebar full width and overlays content */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    left: -100%; /* hide completely */
+  }
+  .sidebar.open {
+    left: 0;
+    width: 100%;
+    padding-top: 60px;
+  }
+  #main-content.sidebar-open {
+    margin-left: 0; /* no shift on mobile */
+  }
+}
+/* End of sidebar styles */
