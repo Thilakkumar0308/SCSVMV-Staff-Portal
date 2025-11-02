@@ -1,0 +1,505 @@
+/* =========================================
+   Modern Professional UI — Students Page
+   ========================================= */
+
+/* Font + Base */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Inter', sans-serif;
+    color: #111827;
+    margin: 0;
+    overflow-y: scroll;
+}
+
+/* Header / Logo Bar */
+.header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(90deg, #2563eb, #1e40af);
+    color: #fff;
+    padding: 1rem 2rem;
+    border-bottom: 3px solid #1d4ed8;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.header-bar .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.4rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.header-bar .logo img {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.2);
+    padding: 4px;
+}
+
+.header-bar .page-title {
+    font-size: 1.2rem;
+    font-weight: 500;
+    opacity: 0.9;
+}
+
+/* =========================================
+   Centered Page Title Styling
+   ========================================= */
+
+.page-title {
+    text-align: center;
+    margin: 2rem 0 2.5rem 0;
+    animation: fadeInTitle 0.6s ease;
+}
+
+.page-title h3 {
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    letter-spacing: 0.4px;
+    margin-bottom: 1rem;
+    position: relative;
+    display: inline-block;
+}
+
+.page-title h3::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -10px;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 4px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #2563eb, #10b981);
+}
+
+.page-title small {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #6b7280;
+    margin-top: 1rem;
+}
+
+@keyframes fadeInTitle {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================
+   Card / Container
+   ========================================= */
+
+.card {
+    margin: 2rem auto;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    padding: 1.5rem 2rem;
+    max-width: 1200px;
+    transition: all 0.2s ease;
+}
+
+.card:hover {
+    box-shadow: 0 14px 40px rgba(0,0,0,0.12);
+    transform: translateY(-2px);
+}
+
+/* =========================================
+   Table Styling (Fixed Hover Shake)
+   ========================================= */
+
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+}
+
+.table thead th {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    padding: 0.8rem;
+    text-align: center;
+    font-weight: 600;
+    border-radius: 6px 6px 0 0;
+}
+
+.table tbody tr {
+    background: #fff;
+    transition: all 0.25s ease;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+/* ✅ Fixed hover effect — No screen shaking */
+.table tbody tr:hover {
+    background: #eff6ff;
+    transform: scale(1.01); /* smooth zoom instead of translate */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.table td {
+    padding: 0.8rem;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #374151;
+}
+
+/* =========================================
+   Student Photos
+   ========================================= */
+
+.table img, .student-card img {
+    border-radius: 50%;
+    object-fit: cover;
+    width: 50px;
+    height: 50px;
+}
+
+/* =========================================
+   Badges
+   ========================================= */
+
+.badge {
+    font-weight: 600;
+    border-radius: 12px;
+    padding: 0.4rem 0.7rem;
+}
+
+.badge-success { background: #10b981; color: #fff; }
+.badge-danger { background: #ef4444; color: #fff; }
+.badge-secondary { background: #6b7280; color: #fff; }
+
+/* =========================================
+   Buttons
+   ========================================= */
+
+.btn {
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(90deg, #2563eb, #1d4ed8);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(90deg, #1d4ed8, #1e40af);
+    transform: translateY(-1px);
+}
+
+.btn-edit {
+    background: #2563eb;
+    color: #fff;
+}
+
+.btn-edit:hover { transform: translateY(-2px); }
+
+.btn-delete {
+    background: #ef4444;
+    color: #fff;
+}
+
+.btn-delete:hover { transform: translateY(-2px); }
+
+/* Export Button */
+#exportAll {
+    background: linear-gradient(90deg, #facc15, #eab308);
+    color: #222;
+}
+
+#exportAll:hover { transform: translateY(-2px); }
+
+/* =========================================
+   DataTables Styling
+   ========================================= */
+
+.dataTables_wrapper .dataTables_filter label,
+.dataTables_wrapper .dataTables_length label,
+.dataTables_wrapper .dataTables_info {
+    color: #374151;
+    font-weight: 500;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 0.45rem 0.6rem;
+    font-size: 0.9rem;
+    background-color: #ffffff;
+    color: #111827;
+    margin-left: 0.4rem;
+    transition: all 0.2s ease;
+}
+
+.dataTables_wrapper .dataTables_filter input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    background: #f3f4f6;
+    border-radius: 6px;
+    padding: 0.3rem 0.7rem;
+    color: #111827 !important;
+    margin: 0 2px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background-color: #2563eb !important;
+    color: #fff !important;
+}
+
+/* =========================================
+   Card Header Titles (Inside Cards)
+   ========================================= */
+
+.card-header {
+    background: none !important;
+    border: none !important;
+    padding-bottom: 0.5rem;
+    text-align: left;
+    animation: fadeInTitle 0.5s ease;
+}
+
+.card-header h5 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    letter-spacing: 0.3px;
+    position: relative;
+    display: inline-block;
+    margin-bottom: 0.35rem;
+}
+
+.card-header h5::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 60px;
+    height: 3px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #2563eb, #10b981);
+}
+
+.card-header small {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #6b7280;
+    margin-top: 0.3rem;
+}
+
+/* =========================================
+   Mobile Cards (for smaller screens)
+   ========================================= */
+
+.student-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    transition: all 0.2s ease;
+}
+
+.student-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    transform: translateY(-2px);
+}
+
+.student-card h6 {
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.student-card p {
+    margin-bottom: 2px;
+    font-size: 0.85rem;
+}
+
+/* Buttons inside student-card */
+.student-card .btn {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    margin-left: 3px;
+}
+
+/* =========================================
+   Responsive
+   ========================================= */
+
+@media (max-width: 768px) {
+    .header-bar {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+    .page-title h3 {
+        font-size: 1.5rem;
+    }
+    .card {
+        padding: 1rem;
+    }
+    .table td, .table th {
+        font-size: 13px;
+    }
+    .student-card img {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+/* =========================================
+   Filter Card Styling — Student Management
+   ========================================= */
+.card.shadow-sm.mb-4 {
+    background: rgba(255, 255, 255, 0.85);
+    border: none;
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    padding: 1rem 1.5rem;
+}
+
+/* Form labels */
+.card-body .form-label {
+    color: #1e3a8a;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+/* Input and Select Fields */
+.card-body .form-control,
+.card-body .form-select {
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    font-size: 0.9rem;
+    padding: 0.45rem 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.card-body .form-control:focus,
+.card-body .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
+}
+
+/* Buttons Section */
+.card-body .btn {
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+/* Primary Button */
+.card-body .btn-primary {
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border: none;
+    color: #fff;
+}
+
+.card-body .btn-primary:hover {
+    background: linear-gradient(90deg, #5a67d8, #6b46c1);
+    transform: translateY(-1px);
+}
+
+/* Success Button */
+.card-body .btn-success {
+    background: linear-gradient(90deg, #16a34a, #22c55e);
+    border: none;
+}
+
+.card-body .btn-success:hover {
+    background: linear-gradient(90deg, #15803d, #16a34a);
+}
+
+/* Secondary Button */
+.card-body .btn-secondary {
+    background: #64748b;
+    border: none;
+}
+
+.card-body .btn-secondary:hover {
+    background: #475569;
+}
+
+/* Responsive layout fixes */
+@media (max-width: 768px) {
+    .card-body .col-12 {
+        margin-bottom: 0.5rem;
+    }
+
+    .card-body .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Footer */
+.footer {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+
+/* ===============================
+   Table Hover & No Shaking Fix
+   =============================== */
+
+/* Ensure table container always reserves space for scrollbar */
+.table-responsive {
+    overflow-y: scroll;  /* always show vertical scrollbar */
+    max-height: 70vh;    /* optional: limits table height */
+}
+
+/* Table rows smooth hover (no height change) */
+#studentsTable tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+/* Hover background only, no padding/border changes */
+#studentsTable tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.05); /* light hover effect */
+}
+
+/* Fix table cells box sizing */
+#studentsTable td,
+#studentsTable th {
+    box-sizing: border-box;
+}
+
+/* Optional: Mobile Cards hover fix */
+.student-card {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.student-card:hover {
+    transform: translateY(-2px); /* subtle lift */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Smooth image inside table */
+#studentsTable td img,
+.student-card img {
+    transition: transform 0.2s ease;
+}
+
+#studentsTable td img:hover,
+.student-card img:hover {
+    transform: scale(1.05);
+}

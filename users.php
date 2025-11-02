@@ -2,8 +2,11 @@
 $page_title = 'User Management';
 require_once 'includes/header.php';
 
-// Require admin role
-require_role('Admin');
+// Require admin or HOD role
+if (!has_role('Admin') && !has_role('HOD')) {
+    redirect('dashboard.php');
+}
+
 
 $message = '';
 $message_type = '';
@@ -120,12 +123,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// Get all users
+// 🔹 Department filter (used when coming from HOD dashboard)
 $users = [];
-$result = $conn->query("SELECT * FROM users ORDER BY created_at DESC");
+
+if (isset($_GET['department']) && is_numeric($_GET['department'])) {
+    $department_filter = (int) $_GET['department'];
+    // Prevent HODs from viewing other departments
+    if (has_role('HOD')) {
+        // Get HOD's actual department from DB
+        $stmt = $conn->prepare("SELECT department_id FROM users WHERE id = ?");
+        $stmt->bind_param("i", $_SESSION['user_id']);
+        $stmt->execute();
+        $hod_dept = $stmt->get_result()->fetch_assoc()['department_id'] ?? null;
+
+        if ($department_filter !== (int)$hod_dept) {
+            // Redirect or show error
+            redirect('users.php?department=' . urlencode($hod_dept));
+            exit;
+        }
+    }
+
+    // Only show teachers from that department
+    $stmt = $conn->prepare("SELECT * FROM users WHERE role = 'Teacher' AND department_id = ? ORDER BY created_at DESC");
+    $stmt->bind_param("i", $department_filter);
+    $stmt->execute();
+    $result = $stmt->get_result();
+} else {
+    // Default: show all users (admin view)
+    $result = $conn->query("SELECT * FROM users ORDER BY created_at DESC");
+}
+
 while ($row = $result->fetch_assoc()) {
     $users[] = $row;
 }
+
 ?>
 
 <div class="container-fluid">
@@ -236,6 +267,7 @@ while ($row = $result->fetch_assoc()) {
                             <option value="HOD">HOD</option>
                             <option value="Teacher">Teacher</option>
                             <option value="Student">Student</option>
+                            <option value="DeptAdmin">DeptAdmin</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -285,6 +317,7 @@ while ($row = $result->fetch_assoc()) {
                             <option value="HOD">HOD</option>
                             <option value="Teacher">Teacher</option>
                             <option value="Student">Student</option>
+                            <option value="DeptAdmin">DeptAdmin</option>
                         </select>
                     </div>
                     <div class="mb-3">

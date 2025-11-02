@@ -1,0 +1,252 @@
+/* =========================================
+   Modern Professional UI — User Logs Page
+   ========================================= */
+
+/* Font + Base */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+    background: #f9fafb;
+    font-family: 'Inter', sans-serif;
+    color: #111827;
+    margin: 0;
+}
+
+/* Header / Logo Bar */
+.header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(90deg, #2563eb, #1e40af);
+    color: #fff;
+    padding: 1rem 2rem;
+    border-bottom: 3px solid #1d4ed8;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.header-bar .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.4rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.header-bar .logo img {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.2);
+    padding: 4px;
+}
+
+.header-bar .page-title {
+    font-size: 1.2rem;
+    font-weight: 500;
+    opacity: 0.9;
+}
+
+/* =========================================
+   Centered Page Title
+   ========================================= */
+.page-title {
+    text-align: center;
+    margin: 2rem 0 1rem 0;
+    animation: fadeInTitle 0.6s ease;
+}
+
+.page-title h3 {
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    letter-spacing: 0.4px;
+    position: relative;
+    display: inline-block;
+    margin-bottom: 0.5rem;
+}
+
+.page-title h3::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -10px;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 4px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #2563eb, #10b981);
+}
+
+.page-title small {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #6b7280;
+    margin-top: 0.5rem;
+}
+
+/* Fade-in animation */
+@keyframes fadeInTitle {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================
+   Cards / Containers
+   ========================================= */
+.card {
+    margin: 2rem auto;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    padding: 1.5rem 2rem;
+    max-width: 1200px;
+    transition: all 0.2s ease;
+}
+
+.card:hover {
+    box-shadow: 0 14px 40px rgba(0,0,0,0.12);
+    transform: translateY(-2px);
+}
+
+/* =========================================
+   Table Styling
+   ========================================= */
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+}
+
+.table thead th {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    padding: 0.8rem;
+    text-align: center;
+    font-weight: 600;
+    border-radius: 6px 6px 0 0;
+}
+
+.table tbody tr {
+    background: #fff;
+    transition: all 0.25s ease;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.table tbody tr:hover {
+    background: #eff6ff;
+    transform: scale(1.01);
+}
+
+.table td {
+    padding: 0.8rem;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #374151;
+}
+
+/* Badges */
+.badge {
+    font-weight: 600;
+    border-radius: 12px;
+    padding: 0.4rem 0.7rem;
+}
+
+.badge-success { background: #10b981; color: #fff; }
+.badge-danger { background: #ef4444; color: #fff; }
+.badge-secondary { background: #6b7280; color: #fff; }
+
+/* Buttons */
+.btn {
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(90deg, #2563eb, #1d4ed8);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(90deg, #1d4ed8, #1e40af);
+    transform: translateY(-1px);
+}
+
+#exportAll {
+    background: linear-gradient(90deg, #facc15, #eab308);
+    color: #222;
+}
+
+#exportAll:hover {
+    transform: scale(1.05);
+}
+
+/* =========================================
+   DataTables Styling
+   ========================================= */
+.dataTables_wrapper .dataTables_filter label,
+.dataTables_wrapper .dataTables_length label,
+.dataTables_wrapper .dataTables_info {
+    color: #374151;
+    font-weight: 500;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 0.45rem 0.6rem;
+    font-size: 0.9rem;
+    background-color: #ffffff;
+    color: #111827;
+    margin-left: 0.4rem;
+    transition: all 0.2s ease;
+}
+
+.dataTables_wrapper .dataTables_filter input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    background: #f3f4f6;
+    border-radius: 6px;
+    padding: 0.3rem 0.7rem;
+    color: #111827 !important;
+    margin: 0 2px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background-color: #2563eb !important;
+    color: #fff !important;
+}
+
+/* =========================================
+   Responsive Adjustments
+   ========================================= */
+@media (max-width: 768px) {
+    .header-bar {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+    .card {
+        padding: 1rem;
+    }
+    .table td, .table th {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 576px) {
+    td[title] {
+        white-space: nowrap; 
+        overflow: hidden; 
+        text-overflow: ellipsis; 
+    }
+}

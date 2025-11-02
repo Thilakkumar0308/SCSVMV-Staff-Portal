@@ -1,0 +1,157 @@
+/* profile.css */
+
+/* Container & card */
+.profile-container {
+    max-width: 900px;
+    margin: auto;
+}
+
+.profile-card {
+    background: #1c1e22;
+    border-radius: 12px;
+    padding: 25px;
+    color: #f8f9fa;
+    transition: all 0.3s ease-in-out;
+}
+
+.profile-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+/* Header */
+.profile-header {
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 15px;
+}
+
+.profile-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: #343a40;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: bold;
+    color: #f8f9fa;
+    text-transform: uppercase;
+    user-select: none;
+    cursor: default;
+}
+
+/* Profile Info */
+.profile-info h4 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.profile-info p {
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+.profile-info small {
+    color: #adb5bd;
+}
+
+/* Edit Button */
+.btn-edit {
+    background: #343a40;
+    color: #f8f9fa;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-edit:hover {
+    background: #495057;
+}
+
+/* Info Cards */
+.info-card {
+    background: #2c3035;
+    border-radius: 10px;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+    gap: 12px;
+    color: #f8f9fa;
+    transition: all 0.3s ease-in-out;
+}
+
+.info-card i {
+    font-size: 1.4rem;
+    color: #ffc107;
+}
+
+.info-card a {
+    color: #f8f9fa;
+    text-decoration: none;
+}
+
+.info-card a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive rows */
+@media (max-width: 767px) {
+    .profile-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .btn-edit {
+        align-self: flex-start;
+    }
+}
+
+/* Modal */
+.modal-content {
+    background: #1c1e22;
+    color: #f8f9fa;
+    border-radius: 12px;
+}
+
+.modal-header {
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.modal .form-label {
+    color: #f8f9fa;
+}
+
+.modal .form-control {
+    background: #2c3035;
+    color: #f8f9fa;
+    border: 1px solid #495057;
+    border-radius: 6px;
+}
+
+.modal .form-control:focus {
+    background: #2c3035;
+    color: #f8f9fa;
+    border-color: #ffc107;
+    box-shadow: none;
+}
+
+.modal .btn-dark {
+    background: #343a40;
+    border: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.modal .btn-dark:hover {
+    background: #495057;
+}

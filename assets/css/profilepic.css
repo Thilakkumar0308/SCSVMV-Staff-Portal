@@ -1,0 +1,31 @@
+/* ===============================
+   Student Profile Picture Styles
+   =============================== */
+
+.student-profile-pic {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+}
+
+/* Hover zoom effect */
+.student-profile-pic:hover {
+    transform: scale(1.05);
+}
+
+/* Center the image nicely */
+.text-center .student-profile-pic {
+    margin: 0 auto;
+    display: block;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .student-profile-pic {
+        width: 120px;
+        height: 120px;
+    }
+}
