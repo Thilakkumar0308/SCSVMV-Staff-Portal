@@ -31,6 +31,7 @@ if ($action === 'add') {
     $description = sanitize_input($_POST['description'] ?? '');
     $action_date = $_POST['action_date'] ?? date('Y-m-d');
     $status      = $_POST['status'] ?? 'Active';
+    $resolved_reason = sanitize_input($_POST['resolved_reason'] ?? '');
     $imposed_by  = intval($_SESSION['user_id'] ?? 0);
 
     if (!$student_id || !$action_type || !$description) {
@@ -38,17 +39,23 @@ if ($action === 'add') {
         exit;
     }
 
+    // Resolved reason validation
+    if ($status === 'Resolved' && !$resolved_reason) {
+        echo json_encode(['success' => false, 'message' => 'Resolved reason is required when status is Resolved.']);
+        exit;
+    }
+
     $stmt = $conn->prepare("
         INSERT INTO disciplinary_actions 
-        (student_id, action_type, description, action_date, imposed_by, status)
-        VALUES (?, ?, ?, ?, ?, ?)
+        (student_id, action_type, description, action_date, status, resolved_reason, imposed_by)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
     ");
     if (!$stmt) {
         echo json_encode(['success' => false, 'message' => 'DB prepare failed: ' . $conn->error]);
         exit;
     }
 
-    $stmt->bind_param("isssis", $student_id, $action_type, $description, $action_date, $imposed_by, $status);
+    $stmt->bind_param("isssssi", $student_id, $action_type, $description, $action_date, $status, $resolved_reason, $imposed_by);
 
     if ($stmt->execute()) {
         // Fetch student info for email
@@ -61,7 +68,7 @@ if ($action === 'add') {
 
         // Send email notification
         if (!empty($email)) {
-            sendDAEmail($email, trim("$fname $lname"), $action_type, $description, $action_date, 'add');
+            sendDAEmail($email, trim("$fname $lname"), $action_type, $description, $action_date, $action === 'add' ? 'add' : 'resolve', $resolved_reason);
         }
 
         $response = ['success' => true, 'message' => 'Disciplinary action recorded successfully'];
@@ -84,13 +91,20 @@ elseif ($action === 'edit') {
     $description = sanitize_input($_POST['description'] ?? '');
     $action_date = $_POST['action_date'] ?? '';
     $status      = $_POST['status'] ?? 'Active';
+    $resolved_reason = sanitize_input($_POST['resolved_reason'] ?? '');
+
+    // Resolved reason validation
+    if ($status === 'Resolved' && !$resolved_reason) {
+        echo json_encode(['success' => false, 'message' => 'Resolved reason is required when status is Resolved.']);
+        exit;
+    }
 
     $stmt = $conn->prepare("
         UPDATE disciplinary_actions
-        SET action_type = ?, description = ?, action_date = ?, status = ?
+        SET action_type = ?, description = ?, action_date = ?, status = ?, resolved_reason = ?
         WHERE id = ?
     ");
-    $stmt->bind_param("ssssi", $action_type, $description, $action_date, $status, $id);
+    $stmt->bind_param("sssssi", $action_type, $description, $action_date, $status, $resolved_reason, $id);
 
     if ($stmt->execute()) {
         $response = ['success' => true, 'message' => 'Record updated successfully'];

@@ -9,7 +9,7 @@ if (!is_logged_in()) {
 }
 
 // Only Admin and DeptAdmin can bulk enroll students
-if (!has_any_role(['Admin', 'DeptAdmin'])) {
+if (!has_any_role(['Admin', 'DeptAdmin', 'HOD'])) {
     redirect('dashboard.php');
 }
 
