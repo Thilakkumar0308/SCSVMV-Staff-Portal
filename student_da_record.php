@@ -14,7 +14,7 @@ function bindParamsStmt($stmt, $types, array &$params) {
     call_user_func_array([$stmt, 'bind_param'], $bind_names);
 }
 
-// Check student_id in URL (external student id)
+// Validate student_id in URL (external student id)
 if (!isset($_GET['student_id']) || trim($_GET['student_id']) === '') {
     echo "<div class='alert alert-danger m-3'>No student selected.</div>";
     require_once 'includes/footer.php';
@@ -53,9 +53,9 @@ $date_filter   = isset($_GET['date']) ? trim($_GET['date']) : '';
 
 // Build query to fetch disciplinary records for this student
 // Note: disciplinary_actions uses columns da_reason and resolved_reason in your schema.
-// We'll alias da_reason to description for display compatibility.
+// We'll select both da_reason and resolved_reason explicitly.
 $query = "
-    SELECT id, action_date, action_type, da_reason AS description, resolved_reason, status
+    SELECT id, action_date, action_type, da_reason, resolved_reason, status, created_at
     FROM disciplinary_actions
     WHERE student_id = ?
 ";
@@ -145,8 +145,10 @@ $disc_result = $disc_stmt->get_result();
                         <tr>
                             <th>Date</th>
                             <th>Action Type</th>
-                            <th class="text-start">Description</th>
+                            <th class="text-start">DA Reason</th>
+                            <th class="text-start">Resolved Reason</th>
                             <th>Status</th>
+                            <th>Added On</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -155,7 +157,8 @@ $disc_result = $disc_stmt->get_result();
                             <tr>
                                 <td><?= !empty($record['action_date']) ? date('M d, Y', strtotime($record['action_date'])) : '' ?></td>
                                 <td><?= htmlspecialchars($record['action_type'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
-                                <td class="text-start"><?= nl2br(htmlspecialchars($record['description'] ?? '', ENT_QUOTES, 'UTF-8')) ?></td>
+                                <td class="text-start"><?= nl2br(htmlspecialchars($record['da_reason'] ?? 'No reason provided', ENT_QUOTES, 'UTF-8')) ?></td>
+                                <td class="text-start"><?= nl2br(htmlspecialchars($record['resolved_reason'] ?? 'No resolved reason provided', ENT_QUOTES, 'UTF-8')) ?></td>
                                 <td>
                                     <?php
                                         $status = $record['status'] ?? '';
@@ -165,10 +168,11 @@ $disc_result = $disc_stmt->get_result();
                                         <?= htmlspecialchars($status, ENT_QUOTES, 'UTF-8') ?>
                                     </span>
                                 </td>
+                                <td><?= !empty($record['created_at']) ? date('M d, Y H:i', strtotime($record['created_at'])) : '' ?></td>
                             </tr>
                             <?php endwhile; ?>
                         <?php else: ?>
-                            <tr><td colspan="4" class="text-muted">No disciplinary records found for this student.</td></tr>
+                            <tr><td colspan="6" class="text-muted">No disciplinary records found for this student.</td></tr>
                         <?php endif; ?>
                     </tbody>
                 </table>

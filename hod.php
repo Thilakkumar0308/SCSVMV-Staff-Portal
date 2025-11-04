@@ -191,8 +191,9 @@ include 'includes/header.php';
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <strong class="d-block"><?= htmlspecialchars($disc['first_name'].' '.$disc['last_name']) ?></strong>
-                                            <span class="text-muted small d-block"><?= htmlspecialchars($disc['class_name'].' '.$disc['section']) ?></span>
-                                            <span class="text-muted small d-block"><?= htmlspecialchars($disc['description'] ?: 'No reason provided') ?></span>
+                                            <span class="text-muted small d-block"><b>Class :</b> <?= htmlspecialchars($disc['class_name'].' '.$disc['section']) ?></span>
+                                            <span class="text-muted small d-block"><b>DA Reason :</b> <?= htmlspecialchars($disc['da_reason'] ?: 'No reason provided') ?></span>
+                                            <span class="text-muted small d-block"><b>Resolved Reason :</b> <?= htmlspecialchars($disc['resolved_reason'] ?: 'No reason provided') ?></span>
                                         </div>
                                         <span class="badge bg-<?= $disc['status']=='Active'?'danger':'secondary' ?> mt-1 mt-sm-0"><?= htmlspecialchars($disc['status']) ?></span>
                                     </div>
